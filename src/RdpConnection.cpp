@@ -713,6 +713,13 @@ bool RdpConnection::onPostConnect()
 
 bool RdpConnection::onClose()
 {
+    // Called from the run thread as it exits. Queued, so the keys are released on
+    // the thread the input handler lives on, and queued first, so it happens
+    // while the session that receives the events is still around: a key that was
+    // held when the connection went away would otherwise stay pressed and start
+    // repeating in the local session.
+    QMetaObject::invokeMethod(d->inputHandler.get(), &InputHandler::releaseHeldKeys, Qt::QueuedConnection);
+
     d->displayControl->close();
     d->clipboard->close();
     d->videoStream->close();
