@@ -84,6 +84,24 @@ public:
     void setUsers(const QList<User> &users);
     void addUser(const User &user);
 
+    /**
+     * Whether to only allow a single client at a time.
+     *
+     * When enabled, the server stops listening for connections as soon as a
+     * client has logged in, and drops the connections that are still trying to
+     * log in. For as long as the session lasts, nobody else can connect to the
+     * port at all: connection attempts are refused by the kernel, so they
+     * cannot interfere with the session that is in use. The server starts
+     * listening again once the last logged in client has disconnected.
+     *
+     * Note that this does not limit connections while no client is logged in,
+     * so a flood of connection attempts cannot keep a client from connecting.
+     *
+     * By default this is enabled.
+     */
+    bool singleConnection() const;
+    void setSingleConnection(bool singleConnection);
+
 
     /** Whether to authenticate against PAM for the user running the daemon
      */
@@ -124,6 +142,26 @@ protected:
 private:
     friend class RdpConnection;
     rdp_settings *rdpSettings() const;
+
+    /**
+     * Close the listening socket while a session is in use, so connection
+     * attempts are refused instead of accepted. Connections that were already
+     * accepted are unaffected.
+     */
+    void suspendListening();
+    /**
+     * Start listening again after a session has ended.
+     */
+    void resumeListening();
+    /**
+     * Drop the oldest connections that have not logged in yet when there are
+     * more of them than we are willing to keep around.
+     */
+    void enforcePendingLoginLimits();
+    /**
+     * Stop tracking a connection and destroy it.
+     */
+    void removeSession(RdpConnection *connection);
 
     class Private;
     const std::unique_ptr<Private> d;

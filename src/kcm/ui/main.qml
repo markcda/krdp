@@ -281,6 +281,24 @@ KCM.ScrollViewKCM {
                     Kirigami.FormSeparator {}
 
                     Kirigami.FormEntry {
+                        title: i18n("Connections:")
+                        subtitle: i18nc("@info:usagetip", "While someone is connected, the server stops listening, so nobody else can connect or even try to log in.")
+
+                        contentItem: QQC2.CheckBox {
+                            text: i18n("Allow only one connection at a time")
+                            checked: settings.singleConnection
+                            onToggled: settings.singleConnection = checked
+
+                            KCM.SettingStateBinding {
+                                configObject: settings
+                                settingName: "singleConnection"
+                            }
+                        }
+                    }
+
+                    Kirigami.FormSeparator {}
+
+                    Kirigami.FormEntry {
                         title: i18n("Operating mode:")
                         subtitle: i18nc("@info:usagetip", "Displays will be locked, and the remote user will see a virtual screen.")
 

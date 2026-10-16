@@ -69,6 +69,9 @@ int main(int argc, char **argv)
         {u"quality"_s,
          u"Encoding quality of the stream, from 0 (lowest) to 100 (highest). With adaptive quality (the default) this is the upper bound; with --static-quality it is the fixed quality."_s,
          u"quality"_s},
+        {u"single-connection"_s,
+         u"Only allow a single client at a time: while a client is logged in the server stops listening, so nobody else can connect to it at all. On by default; only matters if disabled in the configuration."_s},
+        {u"allow-multiple-connections"_s, u"Keep accepting connections while a client is logged in, allowing several clients to connect at the same time."_s},
         {u"adaptive-quality"_s,
          u"Adjust the encoding quality at runtime based on the client's network conditions, up to --quality. On by default; only matters if disabled in the configuration."_s},
         {u"static-quality"_s, u"Pin the encoding quality at --quality instead of adapting it to the client's network conditions."_s},
@@ -112,6 +115,8 @@ int main(int argc, char **argv)
 
     server.setTlsCertificate(certificate);
     server.setTlsCertificateKey(certificateKey);
+
+    server.setSingleConnection((parser.isSet(u"single-connection"_s) || config->singleConnection()) && !parser.isSet(u"allow-multiple-connections"_s));
 
     // Use parsed username/pw if set
     if (parser.isSet(u"username"_s)) {
