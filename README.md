@@ -64,7 +64,18 @@ The following command line options are available for the example server:
     <dd>Set the operation mode to <code>RemoteAccess</code>, <code>SharedAccess</code>, or <code>AdditionalDisplay</code>.</dd>
     <dt>--quality <quality></dt>
     <dd>Set the video quality, from 0 (lowest) to 100 (highest).</dd>
+    <dt>--single-connection</dt>
+    <dd>Only allow a single client at a time. While a client is logged in the server stops listening, so other clients cannot connect to the port at all and their connection attempts cannot interfere with the session that is in use. Enabled by default.</dd>
+    <dt>--allow-multiple-connections</dt>
+    <dd>Keep accepting connections while a client is logged in, allowing several clients to connect at the same time.</dd>
 </dl>
+
+Note that `--single-connection` only applies while a client is actually logged
+in; the server keeps accepting connections when no session is in use, so a
+client can always connect, no matter how many connection attempts other hosts
+are making. Connections that do not log in within 30 seconds are dropped, and
+when too many of them are waiting to log in at once, the oldest ones are
+dropped first.
 
 # Known Working and Not-Working Clients
 
