@@ -93,19 +93,24 @@ void InputHandler::initialize(rdpInput *input)
     input->UnicodeKeyboardEvent = inputUnicodeKeyboardEvent;
 }
 
-bool InputHandler::synchronizeEvent(uint32_t /*flags*/)
+void InputHandler::releaseHeldKeys()
 {
-    // Client is resynchronizing its keyboard state; release any keys we still
-    // believe are held so a lost key-release does not leave a key stuck down.
     const auto stuck = d->pressedKeys;
     d->pressedKeys.clear();
     if (!stuck.isEmpty()) {
-        qCDebug(KRDP) << "Keyboard synchronize: releasing" << stuck.size() << "held key(s)";
+        qCDebug(KRDP) << "Releasing" << stuck.size() << "held key(s)";
     }
     for (auto keycode : stuck) {
         auto event = std::make_shared<QKeyEvent>(QEvent::KeyRelease, 0, Qt::KeyboardModifiers{}, keycode, 0, 0);
         Q_EMIT inputEvent(event);
     }
+}
+
+bool InputHandler::synchronizeEvent(uint32_t /*flags*/)
+{
+    // Client is resynchronizing its keyboard state; release any keys we still
+    // believe are held so a lost key-release does not leave a key stuck down.
+    releaseHeldKeys();
     return true;
 }
 

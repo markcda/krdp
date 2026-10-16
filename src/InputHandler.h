@@ -37,6 +37,16 @@ public:
     void initialize(rdpInput *input);
 
     /**
+     * Release the keys the client currently holds.
+     *
+     * Called when the client resynchronizes its keyboard state and when the
+     * connection is closed, so that a key that was held when the client stopped
+     * sending events does not stay pressed - and start repeating - in the
+     * session we are forwarding input to.
+     */
+    void releaseHeldKeys();
+
+    /**
      * Emitted whenever a new input event was received from the client.
      *
      * \param event The input event that was received.
