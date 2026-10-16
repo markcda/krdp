@@ -47,7 +47,9 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Config DBusAddons KCMUti
 find_package(FreeRDP 3.1 REQUIRED)
 find_package(WinPR 3.1 REQUIRED)
 find_package(FreeRDP-Server 3.1 REQUIRED)
-find_package(KPipeWire 5.27.80 REQUIRED)
+# 6.8.0 for PipeWireBaseEncodedStream::setRequestedSize(), pause()/resume() and
+# setEncoderPaused(), all of which the video stream uses.
+find_package(KPipeWire 6.8.0 REQUIRED)
 find_package(XKB REQUIRED)
 
 find_package(Qt6Keychain CONFIG)
